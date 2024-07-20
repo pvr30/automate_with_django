@@ -1,7 +1,6 @@
 import csv
-from django.core.management.base import BaseCommand, CommandError
-from django.apps import apps
-from django.db import DataError
+from django.core.management.base import BaseCommand
+from dataentry.utils import check_csv_errors
 
 
 class Command(BaseCommand):
@@ -15,25 +14,10 @@ class Command(BaseCommand):
         file_path = kwargs.get('file_path')
         model_name = kwargs.get('model_name').capitalize()
 
-        model = None
-        for app_config in apps.get_app_configs():
-            try:
-                model = apps.get_model(app_config.label, model_name)
-                break
-            except LookupError:
-                continue
-
-        if not model:
-            raise CommandError(f"Model {model_name} not found.")
-
-        model_fields = [field.name for field in model._meta.fields if field.name != 'id']
+        model = check_csv_errors(file_path, model_name)
 
         with open(file_path, 'r') as file:
             reader = csv.DictReader(file)
-            csv_header = reader.fieldnames
-
-            if csv_header != model_fields:
-                raise DataError(f"CSV file doesn't match with the {model_name} table fields.")
 
             for row in reader:
                 model.objects.get_or_create(**row)
