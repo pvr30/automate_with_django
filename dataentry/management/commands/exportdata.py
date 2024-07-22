@@ -1,7 +1,7 @@
 import csv
 from django.core.management.base import BaseCommand, CommandError
-from datetime import datetime
 from django.apps import apps
+from dataentry.utils import generate_csv_file
 
 
 class Command(BaseCommand):
@@ -24,8 +24,7 @@ class Command(BaseCommand):
         if not model:
             raise CommandError(f"Model {model_name} not found.")
 
-        timestamp = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-        file_path = f'exported_{model_name}_{timestamp}.csv'
+        file_path = generate_csv_file(model_name)
 
         with open(file_path, 'w', newline='') as file:
             objs = model.objects.all()
