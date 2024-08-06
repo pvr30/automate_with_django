@@ -13,10 +13,18 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="{% static 'js/custom.js' %}"></script>
     <style>
         .form-group{
             padding: 15px !important;
+        }
+        .home-info{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
         }
     </style>
 </head>
@@ -25,10 +33,18 @@
     <nav class="navbar navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="{% url 'home' %}">Automate with Django</a>
+            {% if user.is_authenticated %}
             <div>
-                <a href="" class="float-right text-decoration-none text-dark">Login</a>
-                &nbsp<a href="" class="float-right btn btn-success">Register</a>
+                Logged in as: <b>{{user}}</b>
+                &nbsp<a href="{% url 'logout' %}" class="float-right btn btn-outline-danger">Logout</a>
             </div>
+
+            {% else %}
+            <div>
+                <a href="{% url 'login' %}" class="float-right text-decoration-none text-dark">Login</a>
+                &nbsp<a href="{% url 'register' %}" class="float-right btn btn-success">Register</a>
+            </div>
+            {% endif %}
         </div>
     </nav>
     {% block content %}
